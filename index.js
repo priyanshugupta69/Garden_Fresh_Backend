@@ -6,6 +6,8 @@ const bodyParser = require("body-parser");
 const session = require('express-session');
 const findOrCreate = require('mongoose-findorcreate')
 const crypto = require('crypto')
+const dotenv = require('dotenv');
+dotenv.config();
 
 var GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { createProxyMiddleware } = require('http-proxy-middleware');
@@ -15,9 +17,22 @@ app.use(bodyParser.json({ limit: '50mb'}));
 const cors = require('cors');
 const store = require('store');
 const { name } = require('store/storages/cookieStorage');
-var password = encodeURIComponent("#KINGraja123");
+const password = encodeURIComponent(process.env.password);
 
-mongoose.connect(`mongodb+srv://priyanshugupta:${password}@gardenfreshcluster.q0wiwfp.mongodb.net/?retryWrites=true&w=majority`, { useNewUrlParser: true });
+(async () => {
+  try{
+    await  mongoose.connect(`mongodb+srv://priyanshugupta:${password}@gardenfreshcluster.q0wiwfp.mongodb.net/?retryWrites=true&w=majority`, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true 
+    });
+    console.log("connected to database")
+
+  }catch(err){
+    console.log(err);
+  }
+ 
+  
+})();
 const userSchema = new mongoose.Schema({
   email: String,
   password: String,
